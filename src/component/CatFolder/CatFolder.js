@@ -6,18 +6,18 @@ function CatFolder({name, type, filePath}) {
 
     function imgCase() {
         return (
-            <div className={styles['img-card']}>
+            <div className={styles['cat-card']}>
                 <img src={imgUrl + filePath} alt={`이미지`} className={styles['img']}/>
-                <p>{name}</p>
+                <span className={styles['name']}>{name}</span>
             </div>
         );
     }
 
     function folderCase() {
         return (
-            <div>
+            <div className={styles['cat-card']}>
                 <AiOutlineFolder size={"200px"} color={"black"}/>
-                <p>{name}</p>
+                <span className={styles['name']}>{name}</span>
             </div>
         )
     }
@@ -28,11 +28,7 @@ function CatFolder({name, type, filePath}) {
         else return <div>Not Dic and File</div>
     }
 
-    return (
-        <div>
-            {render()}
-        </div>
-    );
+    return render();
 }
 
 export default CatFolder;
