@@ -1,24 +1,41 @@
 import "./App.css";
 import CatFolder from "./component/CatFolder";
-import {BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {BrowserRouter as Router, Link} from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
 
 function App() {
+    const locationArray = useRef([]);
+    const currentLocation = useRef(null);
     const [load, setLoad] = useState(false);
     const [folderInfo, setFolderInfo] = useState([]);
 
     useEffect(() => {
         console.log(`useEffect 실행`)
-
-        saveFolderInfo("2").then(() => {
-            console.log("useEffect 끝");
-        });
+        judgeGoBack("");
     }, []);
 
+    function judgeGoBack(id) {
+        console.log(`들어온 id : ${id}`);
+        if (id) {
+            //Go
+            locationArray.current.push(currentLocation.current);
+            currentLocation.current = id;
+            console.log(`Go ${currentLocation.current}`);
+        } else if(id === ""){
+            // Root
+            locationArray.current.push(id);
+            currentLocation.current = id;
+            console.log(`Root ${currentLocation.current}`);
+        }
+        else {
+            currentLocation.current = locationArray.current.pop();
+            console.log(`Back ${currentLocation.current}`);
+        }
+        console.log(`locationArray : ${locationArray.current.length}`);
+        saveFolderInfo(currentLocation.current).then();
+    }
 
     async function saveFolderInfo(id) {
-        console.log(`들어온 id : ${id}`);
-
         // 로딩 실행
         setLoad(true);
 
@@ -27,8 +44,8 @@ function App() {
         const infoArray = await getJson(id);
         setFolderInfo(infoArray);
 
-        // 로딩 끝
-        setLoad(false);
+        // 로딩 종료
+        setLoad(false)
     }
 
 
@@ -47,18 +64,41 @@ function App() {
         if (load) {
             return <div>Loading</div>;
         } else {
-            const catFolderComponent = folderInfo.map(obj => <CatFolder id={obj.id}
-                                                                        name={obj.name}
-                                                                        type={obj.type}
-                                                                        filePath={obj.filePath}/>);
-            return (catFolderComponent);
+            let catFolderComponent;
+            let backButton;
+            if (folderInfo.length === 0) {
+                catFolderComponent = <div>결과가 없습니다.</div>
+            } else {
+                catFolderComponent = folderInfo.map(obj =>
+                    <Link to={`/${obj.id}`} onClick={() => judgeGoBack(obj.id, true)}>
+                        <CatFolder id={obj.id}
+                                   name={obj.name}
+                                   type={obj.type}
+                                   filePath={obj.filePath}/>
+                    </Link>);
+            }
+
+            if (locationArray.current.length === 0) {
+                backButton = <div>Root</div>
+            } else {
+                backButton = <button onClick={() => judgeGoBack(0, false)}>뒤로가기</button>
+            }
+
+
+            return (
+                <div>
+                    {backButton}
+                    {catFolderComponent}
+                </div>);
         }
     }
 
     return (
         <div className={`App`}>
             <header className={`App-header`}>
-                {renderMain()}
+                <Router>
+                    {renderMain()}
+                </Router>
             </header>
         </div>
     );
