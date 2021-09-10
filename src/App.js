@@ -2,6 +2,7 @@ import "./App.css";
 import CatFolder from "./component/CatFolder";
 import {BrowserRouter as Router, Link} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
+import {AiOutlineLeft} from "react-icons/ai";
 
 function App() {
     const locationArray = useRef([]);
@@ -10,28 +11,22 @@ function App() {
     const [folderInfo, setFolderInfo] = useState([]);
 
     useEffect(() => {
-        console.log(`useEffect 실행`)
         judgeGoBack("");
     }, []);
 
     function judgeGoBack(id) {
-        console.log(`들어온 id : ${id}`);
         if (id) {
             //Go
             locationArray.current.push(currentLocation.current);
             currentLocation.current = id;
-            console.log(`Go ${currentLocation.current}`);
-        } else if(id === ""){
+        } else if (id === "") {
             // Root
             locationArray.current.push(id);
             currentLocation.current = id;
-            console.log(`Root ${currentLocation.current}`);
-        }
-        else {
+        } else {
             currentLocation.current = locationArray.current.pop();
-            console.log(`Back ${currentLocation.current}`);
         }
-        console.log(`locationArray : ${locationArray.current.length}`);
+        console.log(`길이 : ${locationArray.current.length}`)
         saveFolderInfo(currentLocation.current).then();
     }
 
@@ -71,17 +66,20 @@ function App() {
             } else {
                 catFolderComponent = folderInfo.map(obj =>
                     <Link to={`/${obj.id}`} onClick={() => judgeGoBack(obj.id, true)}>
-                        <CatFolder id={obj.id}
-                                   name={obj.name}
+                        <CatFolder name={obj.name}
                                    type={obj.type}
                                    filePath={obj.filePath}/>
                     </Link>);
             }
 
-            if (locationArray.current.length === 0) {
+            if (locationArray.current.length === 1) {
                 backButton = <div>Root</div>
             } else {
-                backButton = <button onClick={() => judgeGoBack(0, false)}>뒤로가기</button>
+                backButton = <Link to={`/${currentLocation.current}`}>
+                    <button onClick={() => judgeGoBack(0, false)}>
+                        <AiOutlineLeft/> 뒤로가기
+                    </button>
+                </Link>
             }
 
 
