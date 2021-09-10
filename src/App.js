@@ -1,33 +1,35 @@
-import "./App.css";
-import CatFolder from "./component/CatFolder";
-import {BrowserRouter as Router, Link} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
+import styles from "./App.module.css";
+import CatFolder from "./component/CatFolder";
+import Loading from './component/Loading';
+import {BrowserRouter as Router, Link} from "react-router-dom";
 import {AiOutlineLeft} from "react-icons/ai";
 
 function App() {
-    const locationArray = useRef([]);
-    const currentLocation = useRef(null);
+    const locArray = useRef([]);
+    const currentLoc = useRef(null);
     const [load, setLoad] = useState(false);
     const [folderInfo, setFolderInfo] = useState([]);
 
     useEffect(() => {
+        locArray.current = [];
         judgeGoBack("");
     }, []);
 
     function judgeGoBack(id) {
         if (id) {
             //Go
-            locationArray.current.push(currentLocation.current);
-            currentLocation.current = id;
+            locArray.current.push(currentLoc.current);
+            currentLoc.current = id;
         } else if (id === "") {
             // Root
-            locationArray.current.push(id);
-            currentLocation.current = id;
+            locArray.current.push(id);
+            currentLoc.current = id;
         } else {
-            currentLocation.current = locationArray.current.pop();
+            currentLoc.current = locArray.current.pop();
         }
-        console.log(`길이 : ${locationArray.current.length}`)
-        saveFolderInfo(currentLocation.current).then();
+        console.log(`길이 : ${locArray.current.length}`)
+        saveFolderInfo(currentLoc.current).then();
     }
 
     async function saveFolderInfo(id) {
@@ -55,47 +57,52 @@ function App() {
     }
 
 
-    function renderMain() {
+    function rendering() {
         if (load) {
-            return <div>Loading</div>;
+            return <Loading/>;
         } else {
-            let catFolderComponent;
-            let backButton;
-            if (folderInfo.length === 0) {
-                catFolderComponent = <div>결과가 없습니다.</div>
-            } else {
-                catFolderComponent = folderInfo.map(obj =>
-                    <Link to={`/${obj.id}`} onClick={() => judgeGoBack(obj.id, true)}>
-                        <CatFolder name={obj.name}
-                                   type={obj.type}
-                                   filePath={obj.filePath}/>
-                    </Link>);
-            }
-
-            if (locationArray.current.length === 1) {
-                backButton = <div>Root</div>
-            } else {
-                backButton = <Link to={`/${currentLocation.current}`}>
-                    <button onClick={() => judgeGoBack(0, false)}>
-                        <AiOutlineLeft/> 뒤로가기
-                    </button>
-                </Link>
-            }
-
-
             return (
                 <div>
-                    {backButton}
-                    {catFolderComponent}
+                    <div className={styles[`back-button`]}>
+                        {renderBackButton()}
+                    </div>
+                    {renderMain()}
                 </div>);
+        }
+
+
+    }
+
+    function renderMain() {
+        if (folderInfo.length === 0) {
+            return <div>결과가 없습니다.</div>
+        } else {
+            return (folderInfo.map(obj =>
+                <Link to={`/${obj.id}`} onClick={() => judgeGoBack(obj.id, true)}>
+                    <CatFolder name={obj.name}
+                               type={obj.type}
+                               filePath={obj.filePath}/>
+                </Link>));
+        }
+    }
+
+
+    function renderBackButton() {
+        if (locArray.current.length === 1) {
+            return <div>Root</div>
+        } else {
+            return (
+                <button onClick={() => judgeGoBack(0, false)}>
+                    <AiOutlineLeft/> 나가기
+                </button>);
         }
     }
 
     return (
-        <div className={`App`}>
-            <header className={`App-header`}>
+        <div className={styles[`App`]}>
+            <header className={styles[`App-header`]}>
                 <Router>
-                    {renderMain()}
+                    {rendering()}
                 </Router>
             </header>
         </div>
