@@ -1,0 +1,15 @@
+
+.popup{
+    display: none;
+    position: fixed;
+    z-index: 1;
+    background-color: darkgray;
+    border: 2px solid dimgray;
+    border-radius: 30px;
+}
+
+.img{
+    padding: 10%;
+    width: auto;
+    height: 100%;
+}
