@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch, useHistory} from "react-router-dom";
 import styles from "./App.module.css";
 import Home from "./page/Home";
 import SubDir from "./page/SubDir";
@@ -10,7 +10,7 @@ function App() {
                 <Router>
                     <Switch>
                         <Route exact path={`/`} component={Home}/>
-                        <Route exact path={`/:id`} component={Home}/>
+                        <Route path={`/:id`} component={SubDir}/>
                     </Switch>
                 </Router>
             </header>
