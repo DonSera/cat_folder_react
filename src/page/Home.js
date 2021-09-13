@@ -1,7 +1,7 @@
 import Loading from "../component/Loading";
 import CatFolder from "../component/CatFolder";
 import Fetch from "../function/Fetch";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router-dom";
 
 function Home() {
