@@ -1,8 +1,14 @@
-async function Fetch(id){
-    const folderInfoUrl = `https://zl3m4qq0l9.execute-api.ap-northeast-2.amazonaws.com/dev/`;
-    const url = folderInfoUrl+id;
-    const folderInfoFetch = await fetch(url);
-    return await folderInfoFetch.json();
+async function Fetch(fetchUrl) {
+    const fetchInfo = await fetch(fetchUrl);
+    const info = await fetchInfo.json();
+    if (info.length === 0) {
+        console.log("Fetch Info Nothing")
+        return []
+    } else if (info.message) {
+        console.log(info.message)
+        return []
+    }
+    return info
 }
 
 export default Fetch;
