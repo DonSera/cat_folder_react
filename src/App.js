@@ -8,8 +8,8 @@ function App() {
             <header className={styles[`App-header`]}>
                 <Router>
                     <Switch>
+                        <Route exact path={`/`} component={Home}/>
                         <Route path={`/:id`} component={Home}/>
-                        <Route path={`/`} component={Home}/>
                     </Switch>
                 </Router>
             </header>
